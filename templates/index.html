@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRH - Finnish Company Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PRH Company Search</h1>
+            <p>AI-based search engine for Finnish company details</p>
+        </header>
+        
+        <main>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for a company..." />
+                <button id="searchButton">Search</button>
+            </div>
+            
+            <div id="results" class="results-container"></div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 PRH Company Search</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
