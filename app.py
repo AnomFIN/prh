@@ -272,8 +272,8 @@ def index():
 @app.route('/api/search', methods=['POST'])
 def api_search():
     """Handle company search with field selection"""
-    data = request.get_json()
-    if not data:
+    data = request.get_json(silent=True)
+    if data is None:
         return jsonify({'error': 'Invalid request'}), 400
     
     query = data.get('q', '').strip()
