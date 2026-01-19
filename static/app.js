@@ -442,14 +442,18 @@ function fetchSpecificFinancial(businessId, financialDate) {
             return response.text();
         })
         .then(xmlContent => {
-            resultsContainer.removeChild(loadingMsg);
+            if (loadingMsg && loadingMsg.parentNode) {
+                loadingMsg.parentNode.removeChild(loadingMsg);
+            }
             state.xml = xmlContent;
             state.selectedFinancialDate = financialDate;
             
             // Add or update XML viewer
-            const existingXml = document.querySelector('.xml-viewer-container');
-            if (existingXml) {
-                existingXml.parentElement.removeChild(existingXml.parentElement);
+            const existingXmlSection = Array.from(document.querySelectorAll('.result-section')).find(
+                section => section.querySelector('.xml-viewer-container')
+            );
+            if (existingXmlSection) {
+                existingXmlSection.remove();
             }
             
             const xmlSection = createSection(`Financial XML (${financialDate})`, () => {
@@ -477,8 +481,10 @@ function fetchSpecificFinancial(businessId, financialDate) {
             resultsContainer.appendChild(xmlSection);
         })
         .catch(error => {
-            resultsContainer.removeChild(loadingMsg);
-            alert('Error fetching financial data: ' + error.message);
+            if (loadingMsg && loadingMsg.parentNode) {
+                loadingMsg.parentNode.removeChild(loadingMsg);
+            }
+            showError('Error fetching financial data: ' + error.message);
         });
 }
 

@@ -82,6 +82,8 @@ MOCK_DATA = {
     }
 }
 
+# Finnish Business ID pattern (Y-tunnus): 1234567-8
+BUSINESS_ID_PATTERN = r'^\d{7}-\d$'
 
 class APICallCounter:
     """Track API calls made during a search"""
@@ -103,7 +105,7 @@ def fetch_ytj_data(business_id):
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             return response.json()
-    except Exception as e:
+    except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error fetching YTJ data: {e}")
     
     # Fallback to mock data
@@ -119,7 +121,7 @@ def fetch_registered_notices(business_id):
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             return response.json()
-    except Exception as e:
+    except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error fetching registered notices: {e}")
     
     # Fallback to mock data
@@ -135,7 +137,7 @@ def fetch_financial_periods(business_id):
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             return response.json()
-    except Exception as e:
+    except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error fetching financial periods: {e}")
     
     # Fallback to mock data
@@ -151,7 +153,7 @@ def fetch_financial_xml(business_id, financial_date):
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             return response.text
-    except Exception as e:
+    except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error fetching financial XML: {e}")
     
     # Fallback to mock data
@@ -257,7 +259,7 @@ def search_company_by_name(query):
             data = response.json()
             if data.get('results') and len(data['results']) > 0:
                 return data['results'][0].get('businessId')
-    except Exception as e:
+    except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error searching company: {e}")
     
     return None
@@ -288,7 +290,7 @@ def api_search():
     
     # Determine if query is business ID or name
     business_id = None
-    if re.match(r'^\d{7}-\d$', query):
+    if re.match(BUSINESS_ID_PATTERN, query):
         business_id = query
     else:
         # Search by name
