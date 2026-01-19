@@ -42,12 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
     function displayResults(data) {
         if (data.companies && data.companies.length > 0) {
             const resultsTitle = document.createElement('h2');
