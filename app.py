@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, jsonify, Response
 import requests
-from datetime import datetime
-import json
 import re
 
 app = Flask(__name__)
