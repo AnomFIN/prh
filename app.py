@@ -292,7 +292,6 @@ def api_search():
         business_id = query
     else:
         # Search by name
-        counter.increment()
         business_id = search_company_by_name(query)
     
     if not business_id:
