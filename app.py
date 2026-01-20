@@ -323,7 +323,7 @@ def search_company_by_name(query):
                 results = data['results']
                 query_lower = query.lower()
                 
-                # Find the best match: exact match > starts with query > contains query
+                # Find the best match: exact match > starts with query > first API result
                 # 1. Check for exact match (case-insensitive)
                 for result in results:
                     if result.get('name', '').lower() == query_lower:
