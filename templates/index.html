@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRH - Finnish Company Finder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PRH Company Finder</h1>
+            <p>Complete Finnish company data from PRH APIs</p>
+        </header>
+        
+        <main>
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Enter company name or Business ID (e.g., 0123456-7)" />
+                    <button id="searchButton">Search</button>
+                </div>
+                
+                <div class="search-options">
+                    <label class="toggle">
+                        <input type="checkbox" id="autoLoadLatest" checked />
+                        <span>Auto-load latest financial XML on search</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Field Selection Section -->
+            <div class="field-selection-section">
+                <h3>Data to Return</h3>
+                <div class="field-checkboxes">
+                    <label><input type="checkbox" name="field" value="basics" checked disabled /> Company Basics</label>
+                    <label><input type="checkbox" name="field" value="website" checked /> Website</label>
+                    <label><input type="checkbox" name="field" value="names" checked /> Names History</label>
+                    <label><input type="checkbox" name="field" value="decisionMakers" checked /> Decision Makers</label>
+                    <label><input type="checkbox" name="field" value="registeredEntries" checked /> Registered Entries</label>
+                    <label><input type="checkbox" name="field" value="financialPeriods" checked /> Financial Periods List</label>
+                    <label><input type="checkbox" name="field" value="latestFinancialXml" checked /> Latest Financial XML</label>
+                    <label><input type="checkbox" name="field" value="rawJson" /> Raw JSON Debug</label>
+                </div>
+            </div>
+            
+            <!-- Info Panel -->
+            <details class="info-panel">
+                <summary>ℹ️ What can be fetched?</summary>
+                <div class="info-content">
+                    <h4>Available Data from APIs:</h4>
+                    <ul>
+                        <li><strong>YTJ (Business Information System):</strong> Business ID, official name, company form, registration date, addresses, website URL</li>
+                        <li><strong>Registered Notices:</strong> Registration dates, entry codes, descriptions, decision makers (parsed from entries when available)</li>
+                        <li><strong>XBRL Financial Data:</strong> List of financial periods with dates, specific financial statement XML for any period</li>
+                    </ul>
+                    <p><em>Note: Decision makers are parsed from registered notices. If parsing fails, raw registered entries are shown as fallback.</em></p>
+                </div>
+            </details>
+            
+            <!-- API Call Counter -->
+            <div id="apiCounter" class="api-counter" style="display:none;">
+                API calls made: <span id="apiCountValue">0</span>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="results" class="results-container"></div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 PRH Company Finder</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
