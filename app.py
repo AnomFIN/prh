@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, Response
 import requests
 import re
+from urllib.parse import quote
 
 app = Flask(__name__)
 
@@ -76,6 +77,63 @@ MOCK_DATA = {
     <Revenue contextRef="current" unitRef="EUR" decimals="0">23000000000</Revenue>
     <ProfitLoss contextRef="current" unitRef="EUR" decimals="0">1500000000</ProfitLoss>
     <Assets contextRef="current" unitRef="EUR" decimals="0">45000000000</Assets>
+</xbrl>'''
+    },
+    "1234567-8": {  # Harjun Raskaskone Oy - Added for testing partial search
+        "ytj": {
+            "results": [{
+                "businessId": "1234567-8",
+                "name": "Harjun Raskaskone Oy",
+                "registrationDate": "2010-03-20",
+                "companyForm": "Osakeyhtiö",
+                "detailsUri": None,
+                "contactDetails": [{
+                    "type": "Kotisivun www-osoite",
+                    "value": "www.harjunraskaskone.fi"
+                }],
+                "auxiliaryNames": []
+            }]
+        },
+        "registered": {
+            "registeredEntries": [
+                {
+                    "registrationDate": "2023-01-10",
+                    "entryCode": "H01",
+                    "description": "Hallituksen puheenjohtaja: Virtanen Matti, syntymäaika 10.05.1975",
+                    "authority": "PRH"
+                },
+                {
+                    "registrationDate": "2023-01-10",
+                    "entryCode": "T01",
+                    "description": "Toimitusjohtaja: Korhonen Liisa, syntymäaika 15.08.1980",
+                    "authority": "PRH"
+                }
+            ]
+        },
+        "xbrl": {
+            "financials": [
+                {"financialDate": "2023-12-31", "language": "fi"},
+                {"financialDate": "2022-12-31", "language": "fi"}
+            ]
+        },
+        "xml": '''<?xml version="1.0" encoding="UTF-8"?>
+<xbrl xmlns="http://www.xbrl.org/2003/instance">
+    <context id="current">
+        <entity>
+            <identifier scheme="http://www.ytj.fi">1234567-8</identifier>
+        </entity>
+        <period>
+            <startDate>2023-01-01</startDate>
+            <endDate>2023-12-31</endDate>
+        </period>
+    </context>
+    <unit id="EUR">
+        <measure>iso4217:EUR</measure>
+    </unit>
+    <!-- Sample financial data -->
+    <Revenue contextRef="current" unitRef="EUR" decimals="0">5000000</Revenue>
+    <ProfitLoss contextRef="current" unitRef="EUR" decimals="0">250000</ProfitLoss>
+    <Assets contextRef="current" unitRef="EUR" decimals="0">10000000</Assets>
 </xbrl>'''
     }
 }
@@ -251,11 +309,15 @@ def search_company_by_name(query):
             return bid
     
     try:
-        url = f"{YTJ_BASE_URL}?totalResults=true&maxResults=1&resultsFrom=0&name={query}"
+        # URL encode the query to handle Finnish characters and special characters
+        encoded_query = quote(query)
+        # Increase maxResults to improve chances of finding partial matches
+        url = f"{YTJ_BASE_URL}?totalResults=true&maxResults=10&resultsFrom=0&name={encoded_query}"
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             data = response.json()
             if data.get('results') and len(data['results']) > 0:
+                # Return the first result
                 return data['results'][0].get('businessId')
     except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error searching company: {e}")
