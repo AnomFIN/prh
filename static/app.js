@@ -12,23 +12,6 @@ const state = {
     apiCallsCount: 0
 };
 
-// Configuration constants
-const SEARCH_DEBOUNCE_DELAY = 300; // milliseconds
-const MIN_SEARCH_LENGTH = 3; // minimum characters to trigger auto-search
-
-// Debounce function
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
 // DOM Elements
 let searchInput, searchButton, resultsContainer, apiCounter, apiCountValue, autoLoadCheckbox;
 
@@ -57,20 +40,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Search button click
     searchButton.addEventListener('click', performSearch);
     
-    // Enter key in search input (with debounce)
-    const debouncedSearch = debounce(performSearch, SEARCH_DEBOUNCE_DELAY);
+    // Enter key in search input
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            debouncedSearch();
-        }
-    });
-    
-    // Debounced input for type-ahead search (optional)
-    searchInput.addEventListener('input', function() {
-        // Only auto-search if query is not empty and has reasonable length
-        const query = searchInput.value.trim();
-        if (query.length >= MIN_SEARCH_LENGTH) {
-            debouncedSearch();
+            performSearch();
         }
     });
 });
