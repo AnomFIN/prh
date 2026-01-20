@@ -10,6 +10,9 @@ YTJ_BASE_URL = "https://avoindata.prh.fi/bis/v1"
 REGISTERED_NOTICES_BASE_URL = "https://avoindata.prh.fi/tr-kai/v1"
 XBRL_BASE_URL = "https://xbrl.prh.fi/api"
 
+# Search Configuration
+SEARCH_MAX_RESULTS = 10  # Number of results to request for better partial matching
+
 # Mock data for demonstration (when APIs are unavailable)
 MOCK_DATA = {
     "0112038-9": {  # Nokia
@@ -311,14 +314,28 @@ def search_company_by_name(query):
     try:
         # URL encode the query to handle Finnish characters and special characters
         encoded_query = quote(query)
-        # Increase maxResults to improve chances of finding partial matches
-        url = f"{YTJ_BASE_URL}?totalResults=true&maxResults=10&resultsFrom=0&name={encoded_query}"
+        # Use SEARCH_MAX_RESULTS to improve chances of finding partial matches
+        url = f"{YTJ_BASE_URL}?totalResults=true&maxResults={SEARCH_MAX_RESULTS}&resultsFrom=0&name={encoded_query}"
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
             data = response.json()
             if data.get('results') and len(data['results']) > 0:
-                # Return the first result
-                return data['results'][0].get('businessId')
+                results = data['results']
+                query_lower = query.lower()
+                
+                # Find the best match: exact match > starts with query > contains query
+                # 1. Check for exact match (case-insensitive)
+                for result in results:
+                    if result.get('name', '').lower() == query_lower:
+                        return result.get('businessId')
+                
+                # 2. Check for name starting with query
+                for result in results:
+                    if result.get('name', '').lower().startswith(query_lower):
+                        return result.get('businessId')
+                
+                # 3. Return first result (best match by API)
+                return results[0].get('businessId')
     except (requests.RequestException, requests.Timeout, ConnectionError) as e:
         print(f"Error searching company: {e}")
     
