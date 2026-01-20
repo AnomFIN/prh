@@ -53,10 +53,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Search button click
     searchButton.addEventListener('click', performSearch);
     
-    // Enter key in search input
+    // Enter key in search input (with debounce)
+    const debouncedSearch = debounce(performSearch, 300);
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            performSearch();
+            debouncedSearch();
+        }
+    });
+    
+    // Debounced input for type-ahead search (optional)
+    searchInput.addEventListener('input', function() {
+        // Only auto-search if query is not empty and has reasonable length
+        const query = searchInput.value.trim();
+        if (query.length >= 3) {
+            debouncedSearch();
         }
     });
 });
