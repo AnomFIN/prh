@@ -57,7 +57,7 @@ function performSearch() {
     const query = searchInput.value.trim();
     
     if (!query) {
-        showError('Please enter a company name or Business ID');
+        showError('Syötä yrityksen nimi tai Y-tunnus');
         return;
     }
     
@@ -66,7 +66,7 @@ function performSearch() {
     state.error = null;
     
     // Show loading state
-    resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div><p>Searching...</p></div>';
+    resultsContainer.innerHTML = '<div class="loading"><div class="spinner"></div><p>Haetaan...</p></div>';
     
     // Update fields from checkboxes
     updateFields();
@@ -139,14 +139,14 @@ function displayResults() {
     
     // Company Basics
     if (data.basics) {
-        const basicsSection = createSection('Company Basics', () => {
+        const basicsSection = createSection('Perustiedot', () => {
             const content = document.createElement('div');
             content.className = 'data-grid';
             
-            content.appendChild(createDataRow('Business ID', data.basics.businessId));
-            content.appendChild(createDataRow('Official Name', data.basics.name));
-            content.appendChild(createDataRow('Company Form', data.basics.companyForm));
-            content.appendChild(createDataRow('Registration Date', data.basics.registrationDate));
+            content.appendChild(createDataRow('Y-tunnus', data.basics.businessId));
+            content.appendChild(createDataRow('Virallinen nimi', data.basics.name));
+            content.appendChild(createDataRow('Yhtiömuoto', data.basics.companyForm));
+            content.appendChild(createDataRow('Rekisteröintipäivä', data.basics.registrationDate));
             
             return content;
         });
@@ -155,7 +155,7 @@ function displayResults() {
     
     // Website
     if (data.website && data.website.url) {
-        const websiteSection = createSection('Website', () => {
+        const websiteSection = createSection('Kotisivut', () => {
             const content = document.createElement('div');
             const link = document.createElement('a');
             link.href = data.website.url.startsWith('http') ? data.website.url : 'http://' + data.website.url;
@@ -171,7 +171,7 @@ function displayResults() {
     
     // All Names
     if (data.names && data.names.length > 0) {
-        const namesSection = createSection('Names History', () => {
+        const namesSection = createSection('Nimihistoria', () => {
             const content = document.createElement('div');
             content.className = 'names-list';
             
@@ -189,7 +189,7 @@ function displayResults() {
                 if (nameObj.current) {
                     const badge = document.createElement('span');
                     badge.className = 'badge';
-                    badge.textContent = 'Current';
+                    badge.textContent = 'Nykyinen';
                     nameItem.appendChild(badge);
                 }
                 
@@ -211,15 +211,15 @@ function displayResults() {
     // Decision Makers
     if (data.decisionMakers) {
         if (data.decisionMakers === 'not_available') {
-            const dmSection = createSection('Decision Makers', () => {
+            const dmSection = createSection('Päättäjät', () => {
                 const content = document.createElement('div');
                 content.className = 'not-available';
-                content.textContent = 'Ei saatavilla suoraan (Decision makers not directly available)';
+                content.textContent = 'Ei saatavilla suoraan';
                 return content;
             });
             resultsContainer.appendChild(dmSection);
         } else if (Array.isArray(data.decisionMakers) && data.decisionMakers.length > 0) {
-            const dmSection = createSection('Decision Makers', () => {
+            const dmSection = createSection('Päättäjät', () => {
                 const content = document.createElement('div');
                 content.className = 'decision-makers-list';
                 
@@ -253,7 +253,7 @@ function displayResults() {
     
     // Registered Entries (fallback or requested separately)
     if (data.registeredEntries && Array.isArray(data.registeredEntries) && data.registeredEntries.length > 0) {
-        const entriesSection = createSection('Registered Entries', () => {
+        const entriesSection = createSection('Rekisterimerkinnät', () => {
             const content = document.createElement('div');
             content.className = 'entries-list';
             
@@ -293,7 +293,7 @@ function displayResults() {
     
     // Financial Periods
     if (data.financialPeriods && data.financialPeriods.length > 0) {
-        const finSection = createSection('Financial Periods', () => {
+        const finSection = createSection('Tilikaudet', () => {
             const content = document.createElement('div');
             content.className = 'financial-section';
             
@@ -304,7 +304,7 @@ function displayResults() {
             data.financialPeriods.forEach(period => {
                 const option = document.createElement('option');
                 option.value = period.financialDate;
-                option.textContent = `${period.financialDate} - ${period.language || 'Unknown'}`;
+                option.textContent = `${period.financialDate} - ${period.language || 'Tuntematon'}`;
                 if (period.financialDate === data.latestFinancialDate) {
                     option.selected = true;
                 }
@@ -314,7 +314,7 @@ function displayResults() {
             content.appendChild(select);
             
             const fetchBtn = document.createElement('button');
-            fetchBtn.textContent = 'Fetch Selected Period XML';
+            fetchBtn.textContent = 'Hae valittu tilikausi XML';
             fetchBtn.className = 'btn-secondary';
             fetchBtn.onclick = () => fetchSpecificFinancial(data.businessId, select.value);
             content.appendChild(fetchBtn);
@@ -326,7 +326,7 @@ function displayResults() {
     
     // Latest Financial XML
     if (data.latestFinancialXml) {
-        const xmlSection = createSection('Latest Financial XML', () => {
+        const xmlSection = createSection('Uusin tilinpäätös XML', () => {
             const content = document.createElement('div');
             content.className = 'xml-viewer-container';
             
@@ -334,7 +334,7 @@ function displayResults() {
             toolbar.className = 'xml-toolbar';
             
             const downloadBtn = document.createElement('button');
-            downloadBtn.textContent = '📥 Download XML';
+            downloadBtn.textContent = '📥 Lataa XML';
             downloadBtn.className = 'btn-secondary';
             downloadBtn.onclick = () => downloadXML(data.latestFinancialXml, data.businessId, data.latestFinancialDate);
             toolbar.appendChild(downloadBtn);
@@ -343,7 +343,7 @@ function displayResults() {
             
             const viewer = document.createElement('pre');
             viewer.className = 'xml-viewer';
-            viewer.textContent = data.latestFinancialXml.substring(0, 5000) + (data.latestFinancialXml.length > 5000 ? '\n\n... (truncated, download full XML)' : '');
+            viewer.textContent = data.latestFinancialXml.substring(0, 5000) + (data.latestFinancialXml.length > 5000 ? '\n\n... (lyhennetty, lataa täydellinen XML)' : '');
             content.appendChild(viewer);
             
             return content;
@@ -353,25 +353,25 @@ function displayResults() {
     
     // Raw JSON Debug
     if (state.fields.includes('rawJson')) {
-        const rawSection = createSection('Raw JSON Debug', () => {
+        const rawSection = createSection('Raaka JSON debug', () => {
             const content = document.createElement('div');
             content.className = 'raw-json';
             
             if (data.raw_ytj) {
                 const ytjPre = document.createElement('pre');
-                ytjPre.textContent = 'YTJ Response:\n' + JSON.stringify(data.raw_ytj, null, 2);
+                ytjPre.textContent = 'YTJ-vastaus:\n' + JSON.stringify(data.raw_ytj, null, 2);
                 content.appendChild(ytjPre);
             }
             
             if (data.raw_registered) {
                 const regPre = document.createElement('pre');
-                regPre.textContent = 'Registered Notices Response:\n' + JSON.stringify(data.raw_registered, null, 2);
+                regPre.textContent = 'Rekisterimerkintöjen vastaus:\n' + JSON.stringify(data.raw_registered, null, 2);
                 content.appendChild(regPre);
             }
             
             if (data.raw_xbrl) {
                 const xbrlPre = document.createElement('pre');
-                xbrlPre.textContent = 'XBRL Response:\n' + JSON.stringify(data.raw_xbrl, null, 2);
+                xbrlPre.textContent = 'XBRL-vastaus:\n' + JSON.stringify(data.raw_xbrl, null, 2);
                 content.appendChild(xbrlPre);
             }
             
@@ -420,12 +420,12 @@ function fetchSpecificFinancial(businessId, financialDate) {
     
     const loadingMsg = document.createElement('div');
     loadingMsg.className = 'loading';
-    loadingMsg.textContent = 'Fetching financial XML...';
+    loadingMsg.textContent = 'Haetaan tilinpäätös XML...';
     resultsContainer.appendChild(loadingMsg);
     
     fetch(`/api/financial/${businessId}/${financialDate}`)
         .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch financial data');
+            if (!response.ok) throw new Error('Tilinpäätöstietojen haku epäonnistui');
             return response.text();
         })
         .then(xmlContent => {
@@ -443,7 +443,7 @@ function fetchSpecificFinancial(businessId, financialDate) {
                 existingXmlSection.remove();
             }
             
-            const xmlSection = createSection(`Financial XML (${financialDate})`, () => {
+            const xmlSection = createSection(`Tilinpäätös XML (${financialDate})`, () => {
                 const content = document.createElement('div');
                 content.className = 'xml-viewer-container';
                 
@@ -451,7 +451,7 @@ function fetchSpecificFinancial(businessId, financialDate) {
                 toolbar.className = 'xml-toolbar';
                 
                 const downloadBtn = document.createElement('button');
-                downloadBtn.textContent = '📥 Download XML';
+                downloadBtn.textContent = '📥 Lataa XML';
                 downloadBtn.className = 'btn-secondary';
                 downloadBtn.onclick = () => downloadXML(xmlContent, businessId, financialDate);
                 toolbar.appendChild(downloadBtn);
@@ -460,7 +460,7 @@ function fetchSpecificFinancial(businessId, financialDate) {
                 
                 const viewer = document.createElement('pre');
                 viewer.className = 'xml-viewer';
-                viewer.textContent = xmlContent.substring(0, 5000) + (xmlContent.length > 5000 ? '\n\n... (truncated, download full XML)' : '');
+                viewer.textContent = xmlContent.substring(0, 5000) + (xmlContent.length > 5000 ? '\n\n... (lyhennetty, lataa täydellinen XML)' : '');
                 content.appendChild(viewer);
                 
                 return content;
@@ -471,7 +471,7 @@ function fetchSpecificFinancial(businessId, financialDate) {
             if (loadingMsg && loadingMsg.parentNode) {
                 loadingMsg.parentNode.removeChild(loadingMsg);
             }
-            showError('Error fetching financial data: ' + error.message);
+            showError('Virhe tilinpäätöstietojen haussa: ' + error.message);
         });
 }
 
