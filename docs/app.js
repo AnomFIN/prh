@@ -402,8 +402,8 @@ async function performSearch() {
             }
         }
         
-        // Fetch financial periods
-        if (state.fields.includes('financialPeriods')) {
+        // Fetch financial periods (also needed for latestFinancialXml)
+        if (state.fields.includes('financialPeriods') || state.fields.includes('latestFinancialXml')) {
             callsCount++;
             const financialData = await fetchFinancialPeriods(businessId);
             
@@ -417,7 +417,15 @@ async function performSearch() {
                     const sortedFinancials = financials.sort((a, b) => 
                         (b.financialDate || '').localeCompare(a.financialDate || '')
                     );
-                    result.financialPeriods = sortedFinancials;
+                    
+                    // Always store in state for potential future use
+                    state.financialPeriods = sortedFinancials;
+                    
+                    // Only include periods list in result if explicitly requested
+                    if (state.fields.includes('financialPeriods')) {
+                        result.financialPeriods = sortedFinancials;
+                    }
+                    
                     result.latestFinancialDate = sortedFinancials[0].financialDate;
                     
                     // Auto-fetch latest financial XML if requested
@@ -438,9 +446,14 @@ async function performSearch() {
         state.company = result;
         state.apiCallsCount = result.calls_count;
         
+        // Update selected financial date if available
+        if (result.latestFinancialDate) {
+            state.selectedFinancialDate = result.latestFinancialDate;
+        }
+        
+        // Update financialPeriods state if included in result
         if (result.financialPeriods) {
             state.financialPeriods = result.financialPeriods;
-            state.selectedFinancialDate = result.latestFinancialDate;
         }
         
         if (result.latestFinancialXml) {
