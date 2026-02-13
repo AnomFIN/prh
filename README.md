@@ -2,6 +2,12 @@
 
 Complete AI-powered search application for Finnish company data from PRH (Patentti- ja rekisterihallitus) APIs.
 
+## 🌐 Live Demo
+
+**GitHub Pages Version:** [https://anomfin.github.io/prh/](https://anomfin.github.io/prh/)
+
+The GitHub Pages version is a static, client-side only version that attempts to call PRH APIs directly from your browser. Due to CORS policies, some API calls may be blocked, so mock data is provided for demonstration purposes. For full functionality, please use the Flask application below.
+
 ## Features
 
 ### Data Sources
@@ -31,6 +37,10 @@ prh/
 ├── static/
 │   ├── app.js            # Frontend state management & UI
 │   └── style.css         # Comprehensive styling
+├── docs/                 # GitHub Pages static version
+│   ├── index.html        # Standalone HTML (no Flask templating)
+│   ├── app.js            # Client-side API calls with CORS handling
+│   └── style.css         # Styling
 └── README.md             # This file
 ```
 
@@ -240,6 +250,31 @@ Try these well-known Finnish companies:
 - **Nokia**: Business ID `0112038-9`
 - **Rovio Entertainment**: Search by name
 - **Supercell**: Search by name
+
+## Deployment
+
+### GitHub Pages (Static Version)
+
+The static version is automatically deployed to GitHub Pages via GitHub Actions whenever changes are pushed to the `main` branch.
+
+**Setup:**
+1. Ensure GitHub Pages is enabled in repository settings
+2. Set the source to "GitHub Actions"
+3. The workflow in `.github/workflows/deploy-pages.yml` handles the deployment
+4. The site is served from the `docs/` directory
+
+**Limitations:**
+- CORS policies may block direct API calls to PRH endpoints
+- Mock data is provided as a fallback for demonstration
+- For full functionality, use the Flask application
+
+### Flask Application (Full Functionality)
+
+For production deployment of the full Flask application:
+1. Use a WSGI server like Gunicorn
+2. Configure environment variables appropriately
+3. Consider using a reverse proxy (nginx/Apache)
+4. See deployment guides for Flask applications
 
 ## License
 

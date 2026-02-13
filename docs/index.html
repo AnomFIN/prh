@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRH - Yritystietopalvelu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PRH Yritystietopalvelu</h1>
+            <p>Kattava suomalaisten yritysten tietopalvelu PRH:n rajapinnoista</p>
+            <div class="header-note">
+                <small>⚠️ GitHub Pages staattinen versio - Rajoitettu CORS-politiikoista. Täydellisen toiminnallisuuden saat käyttämällä <a href="https://github.com/AnomFIN/prh" style="color: white; text-decoration: underline;">Flask-sovellusta</a>.</small>
+            </div>
+        </header>
+        
+        <main>
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Syötä yrityksen nimi tai Y-tunnus (esim. 0112038-9)" />
+                    <button id="searchButton">Hae</button>
+                </div>
+                
+                <div class="search-options">
+                    <label class="toggle">
+                        <input type="checkbox" id="autoLoadLatest" checked />
+                        <span>Lataa uusin tilinpäätös automaattisesti haun yhteydessä</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Field Selection Section -->
+            <div class="field-selection-section">
+                <h3>Haettavat tiedot</h3>
+                <div class="field-checkboxes">
+                    <label><input type="checkbox" name="field" value="basics" checked disabled /> Perustiedot</label>
+                    <label><input type="checkbox" name="field" value="website" checked /> Kotisivut</label>
+                    <label><input type="checkbox" name="field" value="names" checked /> Nimihistoria</label>
+                    <label><input type="checkbox" name="field" value="decisionMakers" checked /> Päättäjät</label>
+                    <label><input type="checkbox" name="field" value="registeredEntries" checked /> Rekisterimerkinnät</label>
+                    <label><input type="checkbox" name="field" value="financialPeriods" checked /> Tilikausien lista</label>
+                    <label><input type="checkbox" name="field" value="latestFinancialXml" checked /> Uusin tilinpäätös XML</label>
+                    <label><input type="checkbox" name="field" value="rawJson" /> Raaka JSON debug</label>
+                </div>
+            </div>
+            
+            <!-- Info Panel -->
+            <details class="info-panel">
+                <summary>ℹ️ Mitä tietoja voidaan hakea?</summary>
+                <div class="info-content">
+                    <h4>Saatavilla olevat tiedot rajapinnoista:</h4>
+                    <ul>
+                        <li><strong>YTJ (Yritys- ja yhteisötietojärjestelmä):</strong> Y-tunnus, virallinen nimi, yhtiömuoto, rekisteröintipäivä, osoitteet, kotisivun URL</li>
+                        <li><strong>Rekisterimerkinnät:</strong> Rekisteröintipäivät, merkintäkoodit, kuvaukset, päättäjät (jäsennetty merkinnöistä kun saatavilla)</li>
+                        <li><strong>XBRL-tilinpäätöstiedot:</strong> Lista tilikausista päivämäärineen, yksittäiset tilinpäätökset XML-muodossa</li>
+                    </ul>
+                    <p><em>Huomio: Päättäjät jäsennetään rekisterimerkinnöistä. Jos jäsennys epäonnistuu, näytetään raakatiedot varasuunnitelmana.</em></p>
+                    <p><strong>CORS-rajoitus:</strong> Jotkin PRH:n API:t saattavat estää suorat selainpyynnöt CORS-politiikoiden vuoksi. Tällöin näytetään esittelytarkoitukseen kokonaisdataa. Täydellisen toiminnallisuuden saat käyttämällä Flask-sovellusta.</p>
+                </div>
+            </details>
+            
+            <!-- API Call Counter -->
+            <div id="apiCounter" class="api-counter" style="display:none;">
+                API-kutsuja tehty: <span id="apiCountValue">0</span>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="results" class="results-container"></div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 PRH Yritystietopalvelu | <a href="https://github.com/AnomFIN/prh" style="color: #667eea;">GitHub-repositorio</a></p>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
