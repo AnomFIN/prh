@@ -355,24 +355,27 @@ async function performSearch() {
             callsCount++;
             const ytjData = await fetchYTJData(businessId);
             
-            if (ytjData) {
-                if (state.fields.includes('rawJson')) {
-                    result.raw_ytj = ytjData;
-                }
-                
-                if (state.fields.includes('basics') || state.fields.length === 0) {
-                    result.basics = extractCompanyBasics(ytjData);
-                }
-                
-                if (state.fields.includes('names')) {
-                    result.names = extractAllNames(ytjData);
-                }
-                
-                if (state.fields.includes('website')) {
-                    const website = extractWebsite(ytjData);
-                    if (website) {
-                        result.website = { url: website };
-                    }
+            // YTJ data is required for these fields; treat missing data as an error
+            if (!ytjData) {
+                throw new Error('Required YTJ data is unavailable');
+            }
+            
+            if (state.fields.includes('rawJson')) {
+                result.raw_ytj = ytjData;
+            }
+            
+            if (state.fields.includes('basics') || state.fields.length === 0) {
+                result.basics = extractCompanyBasics(ytjData);
+            }
+            
+            if (state.fields.includes('names')) {
+                result.names = extractAllNames(ytjData);
+            }
+            
+            if (state.fields.includes('website')) {
+                const website = extractWebsite(ytjData);
+                if (website) {
+                    result.website = { url: website };
                 }
             }
         }
