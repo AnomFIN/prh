@@ -418,7 +418,8 @@ async function performSearch() {
                         (b.financialDate || '').localeCompare(a.financialDate || '')
                     );
                     
-                    // Always store in state for potential future use
+                    // Store in state so latestFinancialXml can access the latest date
+                    // and for potential future interactions like fetchSpecificFinancial
                     state.financialPeriods = sortedFinancials;
                     
                     // Only include periods list in result if explicitly requested
@@ -449,11 +450,6 @@ async function performSearch() {
         // Update selected financial date if available
         if (result.latestFinancialDate) {
             state.selectedFinancialDate = result.latestFinancialDate;
-        }
-        
-        // Update financialPeriods state if included in result
-        if (result.financialPeriods) {
-            state.financialPeriods = result.financialPeriods;
         }
         
         if (result.latestFinancialXml) {
