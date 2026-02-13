@@ -314,7 +314,7 @@ function displayResults() {
             content.appendChild(select);
             
             const fetchBtn = document.createElement('button');
-            fetchBtn.textContent = 'Hae valittu tilikausi XML';
+            fetchBtn.textContent = 'Hae valitun tilikauden XML';
             fetchBtn.className = 'btn-secondary';
             fetchBtn.onclick = () => fetchSpecificFinancial(data.businessId, select.value);
             content.appendChild(fetchBtn);
@@ -353,7 +353,7 @@ function displayResults() {
     
     // Raw JSON Debug
     if (state.fields.includes('rawJson')) {
-        const rawSection = createSection('Raaka JSON debug', () => {
+        const rawSection = createSection('Raaka JSON -vianmääritys', () => {
             const content = document.createElement('div');
             content.className = 'raw-json';
             
